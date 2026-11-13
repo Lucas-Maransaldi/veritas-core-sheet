@@ -1,6 +1,9 @@
 # Veritas Core Sheet
 
-Módulo para Foundry VTT 13.351 e D&D5e 5.2.4 até 5.3.3.
+Módulo para Foundry VTT 14.367 e D&D5e 6.0.6.
+
+Esta versão requer Foundry VTT 14.367 ou superior dentro da geração 14 e D&D5e
+6.0.6. O manifesto não declara suporte ao Foundry V13 ou ao D&D5e 5.x.
 
 ## Instalação
 
@@ -24,7 +27,20 @@ https://github.com/Lucas-Maransaldi/veritas-core-sheet/releases/latest/download/
 - Barra de progresso com ajustes positivos ou negativos digitados pelo usuário.
 - Busca instantânea por nome nas duas abas, abrindo automaticamente os grupos arcanos encontrados.
 - Dados armazenados em flags do ator (`flags.veritas-core-sheet`), sem alterar o schema do D&D5e.
+- Cartões personalizados de Extra Skills e Armas respeitam o modo de visibilidade selecionado no chat.
 
 ## Instalação para desenvolvimento
 
 Copie ou vincule esta pasta para `Data/modules/veritas-core-sheet`, ative o módulo no mundo e recarregue o Foundry.
+
+## Validação de compatibilidade
+
+A revisão estática foi feita contra as APIs do Foundry V14 e o código oficial do
+D&D5e 6.0.6. A validação completa em um mundo com as versões alvo ainda precisa ser
+executada. Verifique:
+
+- abertura das abas Espectro de Magia, Extra Skills, Armas, Traços e Reputação;
+- edição e persistência dos valores após fechar e reabrir a ficha;
+- arrastar e soltar Features, abrir suas fichas e selecionar ícones;
+- envio dos cartões de Extra Skills e Armas nos modos público, para o GM, cego e para si;
+- funcionamento das abas e dos controles ao destacar e reanexar a janela da ficha.

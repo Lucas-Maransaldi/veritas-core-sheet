@@ -6,6 +6,8 @@ const WEAPONS_FLAG = "weaponMasteries";
 const TRAIT_CATEGORY_FLAG = "traitCategory";
 const REPUTATION_FLAG = "reputation";
 const MAX_CIRCLE = 13;
+// Namespaced TextEditor (global is deprecated since v13 and removed in later versions).
+const getTextEditor = () => foundry.applications.ux.TextEditor.implementation;
 const MAX_MASTERY = 6;
 const MULTI_FEATURE_SKILLS = new Set(["encantamento", "encantamentos", "encantameto", "cozinha"]);
 
@@ -97,7 +99,7 @@ Hooks.once("init", () => {
     { tab: "reputation", label: "MES.Tabs.Reputation", icon: "fa-solid fa-ranking-star" }
   );
 
-  console.info(`${MODULE_ID} | Inicializado para Foundry VTT 13 e D&D5e 5.2.4.`);
+  console.info(`${MODULE_ID} | Inicializado para Foundry VTT 14.367 e D&D5e 6.0.6.`);
 });
 
 Hooks.once("ready", async () => {
@@ -430,7 +432,7 @@ function actorDevotion(actor) {
 
 async function dropDevotionFeature(actor, event) {
   if ( !actor.isOwner ) return;
-  const data = TextEditor.getDragEventData(event);
+  const data = getTextEditor().getDragEventData(event);
   let item;
   try {
     item = await Item.implementation.fromDropData(data);
@@ -579,7 +581,7 @@ async function createTraitFeature(actor, category) {
 
 async function dropTraitFeature(actor, category, event) {
   if ( !actor.isOwner ) return;
-  const data = TextEditor.getDragEventData(event);
+  const data = getTextEditor().getDragEventData(event);
   let item;
   try {
     item = await Item.implementation.fromDropData(data);
@@ -763,7 +765,7 @@ async function dropSkillSubfeature(actor, skillId, event) {
 
   let feature;
   try {
-    feature = await Item.implementation.fromDropData(TextEditor.getDragEventData(event));
+    feature = await Item.implementation.fromDropData(getTextEditor().getDragEventData(event));
   }
   catch ( error ) {
     console.warn(`${MODULE_ID} | Falha ao interpretar a subfeature arrastada.`, error);
@@ -806,8 +808,7 @@ async function displayMasteryCard(actor, id, flag) {
   const defaultIcon = flag === WEAPONS_FLAG ? "icons/svg/sword.svg" : "icons/svg/book.svg";
   const mastery = prepareMasteryEntry(entry, actor, defaultIcon);
   const feature = actor.items.get(entry.itemId);
-  const enrichedDescription = await TextEditor.enrichHTML(mastery.description, {
-    async: true,
+  const enrichedDescription = await getTextEditor().enrichHTML(mastery.description, {
     secrets: actor.isOwner,
     relativeTo: feature ?? actor
   });
@@ -819,8 +820,7 @@ async function displayMasteryCard(actor, id, flag) {
     ? await Promise.all((entry.subfeatureIds ?? []).map(async featureId => {
       const linkedFeature = actor.items.get(featureId);
       if ( !linkedFeature ) return null;
-      const linkedDescription = await TextEditor.enrichHTML(linkedFeature.system?.description?.value ?? "", {
-        async: true,
+      const linkedDescription = await getTextEditor().enrichHTML(linkedFeature.system?.description?.value ?? "", {
         secrets: actor.isOwner,
         relativeTo: linkedFeature
       });
@@ -872,10 +872,12 @@ async function displayMasteryCard(actor, id, flag) {
       ${linkedFeaturesContent}
     </article>`;
 
-  await ChatMessage.create({
+  const messageData = {
     speaker: ChatMessage.getSpeaker({ actor }),
     content
-  });
+  };
+  ChatMessage.applyMode(messageData, CONFIG.Dice.BasicRoll.getMessageMode());
+  await ChatMessage.create(messageData);
 }
 
 function stripWeaponMetadata(html) {
@@ -981,7 +983,7 @@ async function addSkill(actor, element, flag = SKILLS_FLAG) {
 
 async function dropMasteryFeature(actor, event, flag) {
   if ( !actor.isOwner ) return;
-  const data = TextEditor.getDragEventData(event);
+  const data = getTextEditor().getDragEventData(event);
   let feature;
   try {
     feature = await Item.implementation.fromDropData(data);
