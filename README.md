@@ -33,6 +33,13 @@ https://github.com/Lucas-Maransaldi/veritas-core-sheet/releases/latest/download/
 
 Copie ou vincule esta pasta para `Data/modules/veritas-core-sheet`, ative o módulo no mundo e recarregue o Foundry.
 
+## Empacotamento para publicação
+
+Execute `python tools/package-release.py` em um checkout limpo da versão a publicar.
+O comando gera `dist/veritas-core-sheet.zip` e `dist/module.json`, incluindo a pasta
+`assets` e validando os arquivos do manifesto e as imagens locais dos templates.
+Publique os dois arquivos como anexos da release correspondente à versão do manifesto.
+
 ## Validação de compatibilidade
 
 A revisão estática foi feita contra as APIs do Foundry V14 e o código oficial do
